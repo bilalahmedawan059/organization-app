@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
+use App\Models\Organization;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +14,39 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $adminRole = Role::findOrCreate('Admin');
+        $memberRole = Role::findOrCreate('Member');
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $user = User::factory()->create([
+            'name' => 'Demo User',
+            'email' => 'demo@example.com',
+            'password' => bcrypt('password'),
         ]);
+
+
+        // First organization
+        $org = Organization::create([
+            'name' => 'Acme',
+            'slug' => 'acme',
+            'owner_user_id' => $user->id,
+        ]);
+
+        $org->users()->attach($user->id, ['role' => 'Admin']);
+
+        // Set Spatie's team context before assigning the role
+        setPermissionsTeamId($org->id);
+        $user->assignRole($adminRole);
+
+        // Second organization
+        $org2 = Organization::create([
+            'name' => 'Beta',
+            'slug' => 'beta',
+            'owner_user_id' => $user->id,
+        ]);
+
+        $org2->users()->attach($user->id, ['role' => 'Admin']);
+
+        setPermissionsTeamId($org2->id);
+        $user->assignRole($adminRole);
     }
 }

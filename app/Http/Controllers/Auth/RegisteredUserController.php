@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Organization;
+use Illuminate\Support\Str;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,6 +43,15 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        $org = Organization::create([
+            'name' => $user->name . "'s Organization",
+            'slug' => Str::slug($user->name) . '-' . Str::random(5),
+            'owner_user_id' => $user->id,
+        ]);
+
+        $user->organizations()->attach($org->id, ['role' => 'Admin']);      
+        app(\App\Services\CurrentOrganization::class)->set($org);
 
         event(new Registered($user));
 
