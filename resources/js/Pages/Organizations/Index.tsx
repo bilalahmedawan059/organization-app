@@ -19,7 +19,7 @@ export default function OrganizationsIndex({
     return (
         <div>
 
-            {orgs.map((org: any) => (
+            {/* {orgs.map((org: any) => (
                 <button
                     key={org.id}
                     onClick={() => switchOrg(org.id)}
@@ -28,7 +28,7 @@ export default function OrganizationsIndex({
                 >
                     {org.name}
                 </button>
-            ))}
+            ))} */}
 
 
             <div className="flex justify-between items-center mb-4">
@@ -52,7 +52,7 @@ export default function OrganizationsIndex({
                                 <td className="p-2">{org.name}</td>
                                 <td className="p-2">
                                     <Button
-                                        onClick={() => switchOrg(org.id)}>Create Organization
+                                        onClick={() => switchOrg(org.id)}>open
                                     </Button>
                                 </td>
                             </tr>
